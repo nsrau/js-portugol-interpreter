@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interpretador Portugol / Italiano</title>
+    <link rel="stylesheet" href="src/css/style.css">
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇵🇹</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1 id="app-title">Interpretador Portugol / Italiano</h1>
+            <div class="controls">
+                <select id="language-selector" aria-label="Selecionar Idioma">
+                    <option value="pt">Português</option>
+                    <option value="it">Italiano</option>
+                </select>
+                <button id="theme-toggle-btn" aria-label="Alternar Tema">🌓</button>
+                <button id="help-btn" data-translate-key="helpButton">Ajuda</button>
+            </div>
+        </header>
+        
+        <div class="editor-container">
+            <div class="editor-panel">
+                <div class="panel-header" data-translate-key="codeHeader">Código Fonte</div>
+                <div class="editor-wrapper">
+                    <div id="syntax-highlight-overlay" class="syntax-highlight-base"></div>
+                    <textarea id="code-editor" spellcheck="false" aria-label="Editor de Código"></textarea>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="panel-header" data-translate-key="outputHeader">Saída</div>
+                <div id="output"></div>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button id="run-btn" data-translate-key="runButton">Executar</button>
+            <button id="clear-btn" data-translate-key="clearButton">Limpar</button>
+            <div class="examples-dropdown">
+                <button id="examples-btn" data-translate-key="examplesButton">Exemplos</button>
+                <div class="dropdown-content" id="examples-dropdown-content">
+                    </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-content">
+                <span data-translate-key="developedBy">Interpretador desenvolvido em JavaScript</span>
+                <div class="footer-icon" aria-label="Made by Vide Coding">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 30" width="120" height="24">
+                        <style>
+                            .vide-text { font-family: 'Arial', sans-serif; font-size: 18px; fill: currentColor; }
+                            .vide-v { fill: #007bff; } /* Azul, será sobrescrito pelo CSS da variável de tema */
+                            .vide-c { fill: #28a745; } /* Verde, será sobrescrito pelo CSS da variável de tema */
+                        </style>
+                        <text x="0" y="20" class="vide-text">
+                            Made by <tspan class="vide-v" font-weight="bold">V</tspan>ide <tspan class="vide-c" font-weight="bold">C</tspan>oding
+                        </text>
+                    </svg>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-help-modal">&times;</span>
+            <h2 data-translate-key="helpModalTitle">Ajuda do Interpretador</h2>
+            <div id="help-modal-body">
+                <p data-translate-key="helpIntro">Este é um interpretador online para uma versão simplificada de Portugol e sua adaptação para Italiano. Escreva o seu código no editor à esquerda e clique em "Executar".</p>
+                
+                <h3 data-translate-key="helpSyntaxTitle">Sintaxe Básica (Exemplos em Português / Italiano):</h3>
+                <p><strong><span data-translate-key="keywords.ALGORITHM">Algoritmo</span>:</strong> <code class="kw" data-kw-key="ALGORITHM">algoritmo</span> "NomeDoAlgoritmo"</code></p>
+                <p><strong><span data-translate-key="keywords.VARIABLES">Variáveis</span>:</strong> <code class="kw" data-kw-key="VARIABLES">var</span> nome: <code class="kw" data-kw-key="INTEGER">inteiro</code></code></p>
+                <p data-translate-key="helpSupportedTypes">Tipos suportados: <code class="kw" data-kw-key="INTEGER">inteiro</code>, <code class="kw" data-kw-key="REAL">real</code>, <code class="kw" data-kw-key="STRING">caractere</code>, <code class="kw" data-kw-key="BOOLEAN">logico</code>.</p>
+                <p><strong><span data-translate-key="keywords.ARRAY">Vetores</span>:</strong> <code class="kw" data-kw-key="VARIABLES">var</span> meuVetor: <code class="kw" data-kw-key="ARRAY_DEF">vetor</code>[1..5] <code class="kw" data-kw-key="OF_TYPE">de</code> <code class="kw" data-kw-key="INTEGER">inteiro</code></code></p>
+                <p><strong><span data-translate-key="keywords.START_BLOCK">Início</span>/<span data-translate-key="keywords.END_BLOCK">Fim</span>:</strong> <code class="kw" data-kw-key="START_BLOCK">inicio</span> ... <code class="kw" data-kw-key="END_BLOCK">fimalgoritmo</code></code></p>
+                <p><strong><span data-translate-key="keywords.WRITE">Escrever</span>:</strong> <code class="kw" data-kw-key="WRITE">escreva</span>("Olá", variavel)</code></p>
+                <p><strong><span data-translate-key="keywords.READ">Ler</span>:</strong> <code class="kw" data-kw-key="READ">leia</span>(variavel)</code></p>
+                <p><strong><span data-translate-key="keywords.ASSIGNMENT">Atribuição</span>:</strong> <code class="kw">variavel</span> <code class="op" data-op-key="ASSIGNMENT_OP">&lt;-</code> 10</code></p>
+                <p><strong><span data-translate-key="keywords.IF_THEN_ELSE">Condicional</span>:</strong> <code class="kw" data-kw-key="IF">se</span> condicao <code class="kw" data-kw-key="THEN">entao</span> ... <code class="kw" data-kw-key="ELSE">senao</span> ... <code class="kw" data-kw-key="END_IF">fimse</span></code></p>
+                <p><strong><span data-translate-key="keywords.FOR_LOOP">Ciclo Para</span>:</strong> <code class="kw" data-kw-key="FOR_LOOP">para</span> i <code class="kw" data-kw-key="FROM">de</code> 1 <code class="kw" data-kw-key="TO">ate</code> 10 <code class="kw" data-kw-key="STEP">passo</code> 1 <code class="kw" data-kw-key="DO_LOOP">faca</span> ... <code class="kw" data-kw-key="END_FOR">fimpara</span></code></p>
+                <p><strong><span data-translate-key="keywords.WHILE_LOOP">Ciclo Enquanto</span>:</strong> <code class="kw" data-kw-key="WHILE_LOOP">enquanto</span> condicao <code class="kw" data-kw-key="DO_LOOP">faca</span> ... <code class="kw" data-kw-key="END_WHILE">fimenquanto</span></code></p>
+                <p><strong><span data-translate-key="keywords.FUNCTION_RANDOM">Função Aleatório</span>:</strong> <code class="kw">variavel</span> <code class="op" data-op-key="ASSIGNMENT_OP">&lt;-</code> <code class="kw" data-kw-key="FUNCTION_RANDOM">aleatorio</span>(1, 100)</code></p>
+                <p data-translate-key="helpComments">Comentários: <code class="cmt">// Isto é um comentário</code></p>
+                <p data-translate-key="helpExpressions">Expressões: Suporta operadores aritméticos (+, -, *, /, %), lógicos (<code class="kw" data-kw-key="LOGICAL_AND">e</code>, <code class="kw" data-kw-key="LOGICAL_OR">ou</code>, <code class="kw" data-kw-key="LOGICAL_NOT">nao</code>) e de comparação (=, <>, <, >, <=, >=).</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="src/js/main.js"></script>
+</body>
+</html>

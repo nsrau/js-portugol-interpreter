@@ -1,0 +1,456 @@
+/* css/style.css */
+:root {
+  /* Tema Claro (Default) */
+  --bg-color: #f4f7f9;
+  --text-color: #333;
+  --container-bg: #ffffff;
+  --panel-header-bg: #e9ecef;
+  --panel-border-color: #dee2e6;
+  --editor-bg: #ffffff; /* Fundo do editor (wrapper) */
+  --textarea-text-color: rgba(0,0,0,0.01); /* Cor do texto do textarea quase invisível */
+  --textarea-caret-color: #333; /* Cor do cursor visível */
+  --output-bg: #f8f9fa;
+  --button-bg: #007bff;
+  --button-text-color: #ffffff;
+  --button-hover-bg: #0056b3;
+  --button-active-bg: #004085;
+  --danger-button-bg: #dc3545;
+  --danger-button-hover-bg: #c82333;
+  --info-button-bg: #17a2b8;
+  --info-button-hover-bg: #138496;
+  --dropdown-bg: #ffffff;
+  --dropdown-hover-bg: #e9ecef;
+  --modal-bg: rgba(0, 0, 0, 0.5);
+  --modal-content-bg: #ffffff;
+  --footer-text-color: #6c757d;
+  --footer-border-color: #e9ecef;
+  --error-text-color: #721c24;
+  --error-bg-color: #f8d7da;
+  --error-border-color: #f5c6cb;
+  --input-echo-color: #004085;
+  --link-color: #007bff;
+  --scrollbar-thumb-bg: #adb5bd;
+  --scrollbar-track-bg: #e9ecef;
+
+  --syntax-default-text: #333; /* Cor do texto padrão no overlay de sintaxe */
+  --syntax-kw: #007bff; 
+  --syntax-cmt: #6a737d; 
+  --syntax-str: #28a745; 
+  --syntax-num: #fd7e14; 
+  --syntax-op: #6f42c1;  
+  --vide-v-color: #007bff;
+  --vide-c-color: #28a745;
+}
+
+[data-theme="dark"] {
+  --bg-color: #1a1a2e;
+  --text-color: #e0e0e0;
+  --container-bg: #24243e;
+  --panel-header-bg: #1f1f36;
+  --panel-border-color: #3a3a5a;
+  --editor-bg: #1e1e32;
+  --textarea-text-color: rgba(255,255,255,0.01); /* Cor do texto do textarea quase invisível (escuro) */
+  --textarea-caret-color: #e0e0e0; /* Cor do cursor visível (escuro) */
+  --output-bg: #1c1c30;
+  --button-bg: #4a90e2;
+  --button-text-color: #ffffff;
+  --button-hover-bg: #357abd;
+  --button-active-bg: #2a6296;
+  --danger-button-bg: #e94b3c;
+  --danger-button-hover-bg: #d63027;
+  --info-button-bg: #56c0d8;
+  --info-button-hover-bg: #38a9bf;
+  --dropdown-bg: #2a2a4a;
+  --dropdown-hover-bg: #3a3a5a;
+  --modal-content-bg: #24243e;
+  --footer-text-color: #a0a0c0;
+  --footer-border-color: #3a3a5a;
+  --error-text-color: #f8d7da;
+  --error-bg-color: #721c24;
+  --error-border-color: #8c2f39;
+  --input-echo-color: #8ab4f8;
+  --link-color: #8ab4f8;
+  --scrollbar-thumb-bg: #555;
+  --scrollbar-track-bg: #333;
+
+  --syntax-default-text: #e0e0e0;
+  --syntax-kw: #569cd6;
+  --syntax-cmt: #6a9955;
+  --syntax-str: #ce9178;
+  --syntax-num: #b5cea8;
+  --syntax-op: #c586c0;
+  --vide-v-color: #569cd6;
+  --vide-c-color: #6a9955;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 30px auto; 
+  background-color: var(--container-bg);
+  border-radius: 12px; 
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); 
+  padding: 25px;
+  border: 1px solid var(--panel-border-color);
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--footer-border-color);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.8em; 
+  color: var(--text-color);
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.controls select,
+.controls button {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid var(--panel-border-color);
+  background-color: var(--editor-bg); 
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 0.9em;
+}
+.controls button#theme-toggle-btn {
+  font-size: 1.2em; 
+  padding: 6px 10px;
+}
+
+
+.editor-container {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.editor-panel, .output-panel {
+  flex: 1;
+  min-width: 300px; 
+  border: 1px solid var(--panel-border-color);
+  border-radius: 8px; 
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--editor-bg); 
+}
+
+.panel-header {
+  background-color: var(--panel-header-bg);
+  padding: 12px 15px; 
+  font-weight: 600; 
+  border-bottom: 1px solid var(--panel-border-color);
+  color: var(--text-color);
+}
+
+.editor-wrapper {
+  position: relative; /* Crucial para o posicionamento absoluto do overlay */
+  flex-grow: 1; 
+  background-color: var(--editor-bg); /* Fundo do wrapper, visível atrás do textarea transparente */
+}
+
+/* Base para o editor de texto e o overlay de destaque */
+.syntax-highlight-base {
+  margin: 0;
+  padding: 15px;
+  font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre; /* Preserva espaços e quebras de linha */
+  overflow: auto; /* Permite scroll se o conteúdo for maior */
+  display: block;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box; /* Garante que padding não aumenta o tamanho total */
+}
+
+#code-editor {
+  /* Estende a base e sobrepõe */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1; /* Textarea fica por cima do overlay */
+  background-color: transparent; /* Textarea transparente */
+  color: var(--textarea-text-color); /* Cor do texto quase invisível */
+  caret-color: var(--textarea-caret-color); /* Cor do cursor visível */
+  border: none;
+  outline: none;
+  resize: none; /* O wrapper já tem flex-grow, e o textarea interno é 100% */
+  /* Herda font-family, font-size, line-height, padding da classe base */
+  /* através da sobreposição e do JS que copia o conteúdo */
+  height: 450px; /* Altura inicial, pode ser ajustada */
+}
+
+#syntax-highlight-overlay {
+  /* Estende a base e fica por baixo */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0; /* Overlay fica por baixo do textarea */
+  pointer-events: none; /* Não interage com o rato, cliques passam para o textarea */
+  color: var(--syntax-default-text); /* Cor do texto padrão do overlay */
+  height: 450px; /* Altura inicial, pode ser ajustada */
+}
+
+#output {
+  width: 100%;
+  height: 450px;
+  padding: 15px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  background-color: var(--output-bg);
+  overflow-y: auto;
+  white-space: pre-wrap; 
+  border: none; 
+  color: var(--text-color);
+  line-height: 1.7;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px; 
+  justify-content: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap; 
+}
+
+button {
+  padding: 12px 25px; 
+  background-color: var(--button-bg);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 6px; 
+  cursor: pointer;
+  font-size: 0.95em; 
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+}
+
+button:hover {
+  background-color: var(--button-hover-bg);
+  transform: translateY(-1px); 
+}
+button:active {
+  background-color: var(--button-active-bg);
+  transform: translateY(0px);
+}
+
+#clear-btn { background-color: var(--danger-button-bg); }
+#clear-btn:hover { background-color: var(--danger-button-hover-bg); }
+
+#examples-btn { background-color: var(--info-button-bg); }
+#examples-btn:hover { background-color: var(--info-button-hover-bg); }
+
+.examples-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--dropdown-bg);
+  min-width: 250px; 
+  max-height: 300px; /* Altura máxima para o dropdown */
+  overflow-y: auto;  /* Scroll interno se a lista for longa */
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.15);
+  z-index: 1000; 
+  border-radius: 5px;
+  right: 0; 
+  left: auto;
+  border: 1px solid var(--panel-border-color);
+  margin-top: 5px; 
+}
+
+.dropdown-content a {
+  color: var(--text-color);
+  padding: 10px 15px; 
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  font-size: 0.9em;
+}
+.dropdown-content a:hover {
+  background-color: var(--dropdown-hover-bg);
+}
+
+.examples-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+footer {
+  text-align: center;
+  margin-top: 30px; 
+  padding-top: 20px;
+  border-top: 1px solid var(--footer-border-color);
+  color: var(--footer-text-color);
+  font-size: 0.9em; 
+}
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.footer-icon svg .vide-text {
+  fill: var(--footer-text-color); /* Cor do texto principal do SVG */
+}
+.footer-icon svg .vide-v { 
+  fill: var(--vide-v-color); /* Cor específica para 'V' */
+} 
+.footer-icon svg .vide-c { 
+  fill: var(--vide-c-color); /* Cor específica para 'C' */
+}
+
+
+/* Modal de Ajuda */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 2000; 
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; 
+  background-color: var(--modal-bg); 
+  padding-top: 60px;
+}
+
+.modal-content {
+  background-color: var(--container-bg); 
+  margin: 5% auto;
+  padding: 25px;
+  border: 1px solid var(--panel-border-color);
+  width: 80%;
+  max-width: 700px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  color: var(--text-color);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: var(--text-color); 
+  border-bottom: 1px solid var(--footer-border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+.modal-content h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: var(--text-color);
+}
+.modal-content p {
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+.modal-content code {
+  background-color: var(--output-bg); 
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  color: var(--text-color); 
+}
+.modal-content code.kw { color: var(--syntax-kw); font-weight: bold; }
+.modal-content code.cmt { color: var(--syntax-cmt); font-style: italic; }
+.modal-content code.op { color: var(--syntax-op); }
+
+
+.close-btn {
+  color: var(--footer-text-color); 
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: var(--text-color); 
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Estilos para a saída do interpretador */
+.error {
+  color: var(--error-text-color);
+  font-weight: bold;
+  padding: 8px 12px; 
+  background-color: var(--error-bg-color);
+  border: 1px solid var(--error-border-color);
+  border-radius: 4px;
+  margin-bottom: 8px; 
+  white-space: pre-wrap; 
+}
+.output-message {
+   margin-bottom: 2px;
+   white-space: pre-wrap; 
+}
+.output-input-echo { 
+  color: var(--input-echo-color);
+  font-style: italic;
+  margin-bottom: 2px;
+}
+
+/* Scrollbar customizada (opcional, para Webkit e Firefox) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-bg);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-bg);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-color); 
+}
+/* Para Firefox */
+body { /* Aplicar ao body para garantir que afeta a scrollbar principal */
+scrollbar-width: thin;
+scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-track-bg);
+}
+/* Para elementos com scroll interno como o output e dropdown */
+#output, .dropdown-content {
+scrollbar-width: thin;
+scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-track-bg);
+}
+
+
+/* Destaque de Sintaxe */
+.syntax-highlight-base .keyword { color: var(--syntax-kw); font-weight: bold; }
+.syntax-highlight-base .comment { color: var(--syntax-cmt); font-style: italic; }
+.syntax-highlight-base .string { color: var(--syntax-str); }
+.syntax-highlight-base .number { color: var(--syntax-num); }
+.syntax-highlight-base .operator { color: var(--syntax-op); }
