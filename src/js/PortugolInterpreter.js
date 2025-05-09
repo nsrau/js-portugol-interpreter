@@ -1,4 +1,4 @@
-// js/PortugolInterpreter.js
+// src/js/PortugolInterpreter.js
 
 /**
  * Classe principal do Interpretador de Portugol/Italiano.
@@ -18,6 +18,7 @@ export class PortugolInterpreter {
     this.tokens = [];
   }
 
+  // Constrói a expressão regular do lexer dinamicamente com base nas palavras-chave do idioma
   buildTokenRegex() {
     const keywords = Object.values(this.config.keywords).flat();
     const fixedTokens = [
@@ -39,16 +40,37 @@ export class PortugolInterpreter {
       ":",
       ",",
     ];
-    const allTokensForRegex = [...new Set(keywords)]
+
+    // Primeiro, identificadores gerais
+    const identifierPattern = "[A-Za-z_][\\w]*";
+
+    // Depois, palavras-chave específicas, garantindo que são palavras inteiras (\b)
+    const keywordPatterns = [...new Set(keywords)]
       .map((kw) => kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-      .concat(fixedTokens)
+      .sort((a, b) => b.length - a.length) // Mais longos primeiro
+      .map((kw) => `\\b${kw}\\b`); // Adiciona delimitadores de palavra
+
+    // Outros tokens fixos
+    const fixedTokenPatterns = fixedTokens
+      .map((ft) => ft.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
       .sort((a, b) => b.length - a.length);
 
-    const regexPattern = `\\s*(${allTokensForRegex.join(
+    // Junta tudo, dando prioridade a identificadores, depois keywords, depois fixed tokens
+    // Strings e números são tratados separadamente para evitar conflitos com keywords
+    const allPatterns = [
+      identifierPattern, // Identificadores primeiro
+      ...keywordPatterns,
+      ...fixedTokenPatterns,
+    ];
+
+    // Regex final: strings, números, e depois o resto (identificadores, keywords, operadores)
+    // A ordem aqui é crucial: strings e números primeiro para não serem confundidos.
+    const regexPattern = `\\s*("[^"]*"|'[^']*'|\\d+\\.?\\d*|${allPatterns.join(
       "|"
-    )}|[A-Za-z_]\\w*|"[^"]*"|\\d+\\.?\\d*|[^\\s\\w])\\s*`;
+    )}|[^\\s\\w])\\s*`;
+
     this.log("Regex Pattern for Tokenizer:", regexPattern);
-    return new RegExp(regexPattern, "g");
+    return new RegExp(regexPattern, "gi"); // Adicionado 'i' para case-insensitive nas keywords
   }
 
   log(message, data = null) {
@@ -95,17 +117,15 @@ export class PortugolInterpreter {
         lineLower.startsWith(this.config.keywords.ALGORITHM.toLowerCase())
       ) {
         algorithmDeclared = true;
-        continue; // Próxima linha após declaração do algoritmo
+        continue;
       }
       if (!algorithmDeclared) continue;
 
-      // Verifica o fim do algoritmo de forma mais precisa
       if (
         lineLower === this.config.keywords.END_BLOCK.toLowerCase() ||
         (this.config.keywords.END_BLOCK_ALT &&
           lineLower === this.config.keywords.END_BLOCK_ALT.toLowerCase())
       ) {
-        // Se encontrarmos 'fim' ou 'fimalgoritmo' e já passamos pelo 'inicio', consideramos o fim do bloco principal.
         if (startBlockFound) {
           inMainBlock = false;
           break;
@@ -118,13 +138,12 @@ export class PortugolInterpreter {
         lineLower.startsWith(this.config.keywords.START_BLOCK.toLowerCase())
       ) {
         inMainBlock = true;
-        startBlockFound = true; // Marca que o bloco 'inicio' foi encontrado
+        startBlockFound = true;
         inVarContext = false;
       } else if (
         lineLower.startsWith(this.config.keywords.VARIABLES.toLowerCase())
       ) {
         if (startBlockFound) {
-          // 'var' não pode aparecer depois de 'inicio'
           throw new Error(
             this.getMessage(
               "errorVarAfterStart",
@@ -202,13 +221,12 @@ export class PortugolInterpreter {
 
           let start, end;
           try {
-            // Para avaliar limites, usamos um interpretador temporário sem output e com o escopo atual
             const tempEvalInterpreter = new PortugolInterpreter(
               "",
               null,
               this.config
             );
-            tempEvalInterpreter.variables = { ...this.variables }; // Passa uma cópia das variáveis atuais
+            tempEvalInterpreter.variables = { ...this.variables };
             tempEvalInterpreter.arrays = { ...this.arrays };
             start = parseInt(tempEvalInterpreter.evaluateExpression(startExpr));
             end = parseInt(tempEvalInterpreter.evaluateExpression(endExpr));
@@ -613,7 +631,6 @@ export class PortugolInterpreter {
     let nestedLevel = 0;
     const currentBlockStartKeywordLower = startKeyword.toLowerCase().trim();
     const endKeywordLower = endKeyword.toLowerCase().trim();
-    // Garante que as palavras-chave de aninhamento são strings válidas antes de chamar toLowerCase
     const allStartKeywordsLower = [
       currentBlockStartKeywordLower,
       ...otherPotentiallyNestedStartKeywords
@@ -631,12 +648,14 @@ export class PortugolInterpreter {
 
       let isAStart = false;
       for (const skw of allStartKeywordsLower) {
+        // Verifica se a linha começa com a palavra-chave seguida de espaço ou parêntese, ou se é exatamente a palavra-chave
         if (
           currentLineLower.startsWith(skw + " ") ||
           currentLineLower.startsWith(skw + "(") ||
           currentLineLower === skw
         ) {
           if (skw === currentBlockStartKeywordLower) {
+            // Apenas incrementa se for o mesmo tipo de bloco
             nestedLevel++;
             this.log(
               `  findMatchingEnd: Nível aninhado de '${skw}' ++ para ${nestedLevel} na linha ${
@@ -650,7 +669,6 @@ export class PortugolInterpreter {
       }
 
       if (currentLineLower === endKeywordLower) {
-        // Não precisa de !isAStart aqui, pois o fim de um bloco é prioritário
         if (nestedLevel === 0) {
           this.log(
             `  findMatchingEnd: Encontrado '${endKeywordLower}' correspondente na linha ${
@@ -913,49 +931,77 @@ export class PortugolInterpreter {
     let match;
     this.tokenRegex.lastIndex = 0;
     while ((match = this.tokenRegex.exec(expression)) !== null) {
-      const tokenValue = match[1];
+      const tokenValue = match[1]; // O grupo de captura principal
       let type;
       const tokenLower = tokenValue.toLowerCase();
       const kw = this.config.keywords;
 
-      if (!isNaN(parseFloat(tokenValue)) && isFinite(tokenValue))
+      if (
+        !isNaN(parseFloat(tokenValue)) &&
+        isFinite(tokenValue) &&
+        !/^[a-zA-Z_]/.test(tokenValue)
+      ) {
+        // Garante que não é um identificador que começa com número
         type = "NUMBER";
-      else if (tokenValue.startsWith('"') && tokenValue.endsWith('"'))
+      } else if (tokenValue.startsWith('"') && tokenValue.endsWith('"')) {
         type = "STRING";
-      else if (
+      } else if (
         tokenLower === kw.TRUE.toLowerCase() ||
         tokenLower === kw.FALSE.toLowerCase()
-      )
+      ) {
         type = "BOOLEAN";
-      else if (
+      } else if (
         tokenLower === kw.LOGICAL_AND.toLowerCase() ||
         tokenLower === kw.LOGICAL_OR.toLowerCase() ||
         tokenLower === kw.LOGICAL_NOT.toLowerCase()
-      )
+      ) {
         type = "LOGICAL_OPERATOR";
-      else if (["+", "-", "*", "/", "%"].includes(tokenValue))
+      } else if (["+", "-", "*", "/", "%"].includes(tokenValue)) {
         type = "OPERATOR";
-      else if (["=", "<>", "<", ">", "<=", ">="].includes(tokenValue))
+      } else if (["=", "<>", "<", ">", "<=", ">="].includes(tokenValue)) {
         type = "COMPARISON_OPERATOR";
-      else if (tokenValue === "(") type = "LPAREN";
-      else if (tokenValue === ")") type = "RPAREN";
-      else if (tokenValue === "[") type = "LBRACKET";
-      else if (tokenValue === "]") type = "RBRACKET";
-      else if (tokenValue === ",") type = "COMMA";
-      else if (/^[A-Za-z_]\w*$/.test(tokenValue)) {
-        // Verifica se é um identificador válido
-        // Verifica se é uma palavra-chave de tipo (ex: "inteiro", "reale")
-        if (Object.keys(this.config.types).includes(tokenLower)) {
-          type = "TYPE_KEYWORD"; // Poderia ser útil para validação, mas não usado no parser atual
-        } else {
-          type = "IDENTIFIER";
+      } else if (tokenValue === "(") {
+        type = "LPAREN";
+      } else if (tokenValue === ")") {
+        type = "RPAREN";
+      } else if (tokenValue === "[") {
+        type = "LBRACKET";
+      } else if (tokenValue === "]") {
+        type = "RBRACKET";
+      } else if (tokenValue === ",") {
+        type = "COMMA";
+      } else if (/^[A-Za-z_]\w*$/.test(tokenValue)) {
+        // Verifica se é uma palavra-chave do idioma ANTES de classificar como IDENTIFIER
+        let isKeyword = false;
+        for (const key in kw) {
+          if (kw[key] === tokenLower) {
+            // Precisa de um tratamento mais específico para keywords vs operators
+            if (
+              [
+                "e",
+                "ou",
+                "nao",
+                kw.TRUE.toLowerCase(),
+                kw.FALSE.toLowerCase(),
+              ].includes(tokenLower)
+            ) {
+              // Já tratado acima ou será tratado como LOGICAL_OPERATOR/BOOLEAN
+            } else {
+              // type = 'KEYWORD_IN_EXPRESSION'; // Tipo genérico para outras keywords em expressões
+            }
+            isKeyword = true;
+            break;
+          }
         }
-      } else
+        if (!isKeyword) type = "IDENTIFIER";
+        else if (!type) type = "IDENTIFIER"; // Fallback para identificador se não for keyword específica de expressão
+      } else {
         throw new Error(
           this.getMessage("errorUnknownTokenInExpression", tokenValue)
         );
+      }
 
-      this.tokens.push({ type, value: tokenValue });
+      if (type) this.tokens.push({ type, value: tokenValue });
     }
     this.currentTokenIndex = 0;
     this.log("Tokens da expressão:", this.tokens);
