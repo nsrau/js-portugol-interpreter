@@ -30,7 +30,10 @@
   --link-color: #007bff;
   --scrollbar-thumb-bg: #adb5bd;
   --scrollbar-track-bg: #e9ecef;
-  --select-arrow-svg-fill: "%23444444"; /* URL encoded #444444 para a seta do select */
+
+  /* URL do SVG da seta para o tema claro (cor #444444) */
+  --select-arrow-url: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23444444%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  --select-arrow-info-url: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); /* Seta branca para o select de exemplos */
 
   /* Cores para o tema do Monaco (claro) */
   --monaco-editor-background: #ffffff;
@@ -73,7 +76,10 @@
   --link-color: #8ab4f8;
   --scrollbar-thumb-bg: #555;
   --scrollbar-track-bg: #2c2c2c;
-  --select-arrow-svg-fill: "%23cccccc"; /* URL encoded #cccccc para a seta do select no tema escuro */
+
+  /* URL do SVG da seta para o tema escuro (cor #cccccc) */
+  --select-arrow-url: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23cccccc%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  --select-arrow-info-url: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); /* Seta branca para o select de exemplos */
 
   /* Cores para o tema do Monaco (escuro) */
   --monaco-editor-background: #1e1e1e;
@@ -146,8 +152,13 @@ body {
 
 /* Estilização da seta para TODOS os selects dentro de .controls */
 .controls select {
-  padding-right: 30px; /* Espaço para a seta */
-
+  padding-right: 30px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: var(--select-arrow-url); /* Usa a variável CSS */
+  background-repeat: no-repeat;
+  background-position: right 10px center;
   background-size: 0.5em auto;
 }
 .controls select::-ms-expand {
@@ -224,7 +235,7 @@ body {
 
 #examples-selector {
   padding: 11px 15px;
-  padding-right: 35px; /* Espaço para a seta */
+  padding-right: 35px;
   border-radius: 6px;
   border: 1px solid var(--panel-border-color);
   background-color: var(--info-button-bg);
@@ -232,6 +243,15 @@ body {
   cursor: pointer;
   font-size: 0.95em;
   font-weight: 500;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: var(
+    --select-arrow-info-url
+  ); /* Seta específica para este select */
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 0.6em auto;
   transition: background-color 0.2s ease-in-out;
 }
 #examples-selector:hover {
