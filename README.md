@@ -2,8 +2,6 @@
 
 Um interpretador online para uma versão simplificada de Portugol e sua adaptação para Italiano.
 
-![Preview do Interpretador](preview.png)
-
 ## Funcionalidades
 
 - Suporte a português e italiano
@@ -20,13 +18,13 @@ Um interpretador online para uma versão simplificada de Portugol e sua adaptaç
 
 ## Uso Online
 
-Acesse a versão online em: https://seu-usuario.github.io/portugol-js
+Acesse a versão online em: https://nsrau.github.io/js-portugol-interpreter/
 
 ## Desenvolvimento Local
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/seu-usuario/portugol-js.git
+git clone https://github.com/nsrau/js-portugol-interpreter.git
 ```
 
 2. Abra o arquivo `index.html` em um navegador web moderno.
